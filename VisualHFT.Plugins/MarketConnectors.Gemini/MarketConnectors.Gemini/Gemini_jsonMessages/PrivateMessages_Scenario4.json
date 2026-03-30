@@ -1,0 +1,135 @@
+[
+  [
+    {
+      "type": "accepted",
+      "order_id": "73795636390706788",
+      "event_id": "1738042352778852",
+      "account_name": "primary",
+      "client_order_id": "f344cb50-c7a6-43c3-b1a0-2d54458ad8fb",
+      "api_session": "web",
+      "symbol": "BTCUSD",
+      "side": "sell",
+      "order_type": "market sell",
+      "timestamp": "1740385059",
+      "timestampms": 1740385059519,
+      "is_live": true,
+      "is_cancelled": false,
+      "is_hidden": false,
+      "original_amount": "1",
+      "socket_sequence": 2
+    }
+  ],
+  [
+    {
+      "type": "fill",
+      "order_id": "73795636390706788",
+      "account_name": "primary",
+      "client_order_id": "f344cb50-c7a6-43c3-b1a0-2d54458ad8fb",
+      "api_session": "web",
+      "symbol": "BTCUSD",
+      "side": "sell",
+      "order_type": "market sell",
+      "timestamp": "1740385059",
+      "timestampms": 1740385059519,
+      "is_live": true,
+      "is_cancelled": false,
+      "is_hidden": false,
+      "avg_execution_price": "96162.6956",
+      "executed_amount": "0.71077875",
+      "remaining_amount": "0.28922125",
+      "original_amount": "1",
+      "fill": {
+        "trade_id": "2840141248864806",
+        "liquidity": "Taker",
+        "price": "96163.93",
+        "amount": "0.71077875",
+        "fee": "136.70255",
+        "fee_currency": "USD"
+      },
+      "socket_sequence": 3
+    }
+  ],
+  [
+    {
+      "type": "fill",
+      "order_id": "73795636390706788",
+      "account_name": "primary",
+      "client_order_id": "f344cb50-c7a6-43c3-b1a0-2d54458ad8fb",
+      "api_session": "web",
+      "symbol": "BTCUSD",
+      "side": "sell",
+      "order_type": "market sell",
+      "timestamp": "1740385059",
+      "timestampms": 1740385059519,
+      "is_live": true,
+      "is_cancelled": false,
+      "is_hidden": false,
+      "avg_execution_price": "96162.6956",
+      "executed_amount": "0.94277875",
+      "remaining_amount": "0.05722125",
+      "original_amount": "1",
+      "fill": {
+        "trade_id": "2840141248864807",
+        "liquidity": "Taker",
+        "price": "96159.85",
+        "amount": "0.232",
+        "fee": "44.61817",
+        "fee_currency": "USD"
+      },
+      "socket_sequence": 4
+    }
+  ],
+  [
+    {
+      "type": "fill",
+      "order_id": "73795636390706788",
+      "account_name": "primary",
+      "client_order_id": "f344cb50-c7a6-43c3-b1a0-2d54458ad8fb",
+      "api_session": "web",
+      "symbol": "BTCUSD",
+      "side": "sell",
+      "order_type": "market sell",
+      "timestamp": "1740385059",
+      "timestampms": 1740385059519,
+      "is_live": true,
+      "is_cancelled": false,
+      "is_hidden": false,
+      "avg_execution_price": "96162.6956",
+      "executed_amount": "1.0",
+      "remaining_amount": "0",
+      "original_amount": "1",
+      "fill": {
+        "trade_id": "2840141248864807",
+        "liquidity": "Taker",
+        "price": "96159.85",
+        "amount": "0.232",
+        "fee": "44.61817",
+        "fee_currency": "USD"
+      },
+      "socket_sequence": 5
+    }
+  ],
+  [
+    {
+      "type": "closed",
+      "order_id": "73795636390706788",
+      "event_id": "1738042352778852",
+      "account_name": "primary",
+      "client_order_id": "f344cb50-c7a6-43c3-b1a0-2d54458ad8fb",
+      "api_session": "web",
+      "symbol": "BTCUSD",
+      "side": "sell",
+      "order_type": "market sell",
+      "timestamp": "1740385059",
+      "timestampms": 1740385059519,
+      "is_live": false,
+      "is_cancelled": false,
+      "is_hidden": false,
+      "avg_execution_price": "96162.6956",
+      "executed_amount": "1",
+      "remaining_amount": "0",
+      "original_amount": "1",
+      "socket_sequence": 6
+    }
+  ]
+]

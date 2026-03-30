@@ -1,0 +1,65 @@
+[
+  {
+    "channel": "executions",
+    "type": "update",
+    "data": [
+      {
+        "order_id": "OGJPSD-EF7TB-JVCJZV",
+        "symbol": "BTC/USD",
+        "order_qty": 0.00005000,
+        "cum_cost": 0.00000,
+        "time_in_force": "GTC",
+        "exec_type": "pending_new",
+        "side": "buy",
+        "order_type": "limit",
+        "order_userref": 0,
+        "limit_price_type": "static",
+        "limit_price": 95689.0,
+        "stop_price": 0.0,
+        "order_status": "pending_new",
+        "fee_usd_equiv": 0.00000,
+        "fee_ccy_pref": "fciq",
+        "timestamp": "2025-02-12T06:37:48.432286Z"
+      }
+    ],
+    "sequence": 5
+  },
+
+  {
+    "channel": "executions",
+    "type": "update",
+    "data": [
+      {
+        "timestamp": "2025-02-12T06:37:48.432286Z",
+        "order_status": "new",
+        "exec_type": "new",
+        "order_userref": 0,
+        "order_id": "OGJPSD-EF7TB-JVCJZV"
+      }
+    ],
+    "sequence": 6
+  },
+
+
+  {
+    "channel": "executions",
+    "type": "update",
+    "data": [
+      {
+        "timestamp": "2025-02-12T06:39:22.962656Z",
+        "order_status": "canceled",
+        "exec_type": "canceled",
+        "cum_qty": 0.00000000,
+        "cum_cost": 0.00000,
+        "fee_usd_equiv": 0.00000,
+        "avg_price": 0.0,
+        "order_userref": 0,
+        "cancel_reason": "User requested",
+        "reason": "User requested",
+        "order_id": "OGJPSD-EF7TB-JVCJZV"
+      }
+    ],
+    "sequence": 7
+
+  }
+]

@@ -1,0 +1,94 @@
+[
+  {
+    "channel": "executions",
+    "type": "update",
+    "data": [
+      {
+        "order_id": "OKUMU7-UQXEG-NT7T2O",
+        "symbol": "REP/USD",
+        "order_qty": 20.73359073,
+        "cum_cost": 0.00000,
+        "time_in_force": "GTC",
+        "exec_type": "pending_new",
+        "side": "buy",
+        "order_type": "limit",
+        "order_userref": 0,
+        "limit_price_type": "static",
+        "limit_price": 0.777,
+        "stop_price": 0.000,
+        "order_status": "pending_new",
+        "fee_usd_equiv": 0.00000,
+        "fee_ccy_pref": "fciq",
+        "timestamp": "2025-03-03T17:31:47.908791Z"
+      }
+    ],
+    "sequence": 52
+  },
+  {
+    "channel": "executions",
+    "type": "update",
+    "data": [
+      {
+        "timestamp": "2025-03-03T17:31:47.908791Z",
+        "order_status": "new",
+        "exec_type": "new",
+        "order_userref": 0,
+        "order_id": "OKUMU7-UQXEG-NT7T2O"
+      }
+    ],
+    "sequence": 53
+  },
+  {
+    "channel": "executions",
+    "type": "update",
+    "data": [
+      {
+        "order_id": "OKUMU7-UQXEG-NT7T2O",
+        "order_userref": 0,
+        "exec_id": "TJT37K-4GT3U-Y2RX5V",
+        "exec_type": "trade",
+        "trade_id": 871727,
+        "symbol": "REP/USD",
+        "side": "buy",
+        "last_qty": 14.55326384,
+        "last_price": 0.777,
+        "liquidity_ind": "t",
+        "cost": 11.30789,
+        "order_type": "limit",
+        "timestamp": "2025-03-03T17:31:47.908791Z",
+        "order_status": "partially_filled",
+        "cum_qty": 14.55326384,
+        "cum_cost": 11.30789,
+        "avg_price": 0.777,
+        "fee_usd_equiv": 0.04523,
+        "fees": [
+          {
+            "asset": "USD",
+            "qty": 0.04523
+          }
+        ]
+      }
+    ],
+    "sequence": 54
+  },
+  {
+    "channel": "executions",
+    "type": "update",
+    "data": [
+      {
+        "timestamp": "2025-03-03T17:31:58.518398Z",
+        "order_status": "canceled",
+        "exec_type": "canceled",
+        "cum_qty": 14.55326384,
+        "cum_cost": 11.30789,
+        "fee_usd_equiv": 0.04523,
+        "avg_price": 0.777,
+        "order_userref": 0,
+        "cancel_reason": "User requested",
+        "reason": "User requested",
+        "order_id": "OKUMU7-UQXEG-NT7T2O"
+      }
+    ],
+    "sequence": 55
+  }
+]

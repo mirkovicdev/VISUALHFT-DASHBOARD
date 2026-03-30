@@ -1,0 +1,414 @@
+[
+  {
+    "channel": "executions",
+    "type": "snapshot",
+    "data": [
+      {
+        "order_id": "OOUGVF-5ZK2X-K422OG",
+        "exec_id": "T5KIUY-NUED2-YHLMQK",
+        "exec_type": "trade",
+        "trade_id": 79790870,
+        "symbol": "BTC/USD",
+        "side": "sell",
+        "last_qty": 0.00009006,
+        "last_price": 96180.7,
+        "liquidity_ind": "t",
+        "cost": 8.66203,
+        "order_userref": 0,
+        "order_status": "filled",
+        "order_type": "limit",
+        "fee_usd_equiv": 0.03465,
+        "fees": [
+          {
+            "asset": "USD",
+            "qty": 0.03465
+          }
+        ],
+        "timestamp": "2025-02-12T08:19:53.025580Z"
+      },
+      {
+        "order_id": "OVL2AE-OTI3E-UDZXNB",
+        "symbol": "BTC/USD",
+        "order_qty": 0.00005000,
+        "cum_cost": 0.00000,
+        "time_in_force": "GTC",
+        "exec_type": "new",
+        "side": "sell",
+        "order_type": "limit",
+        "order_userref": 0,
+        "limit_price_type": "static",
+        "limit_price": 98000.0,
+        "stop_price": 0.0,
+        "order_status": "new",
+        "fee_usd_equiv": 0.00000,
+        "fee_ccy_pref": "fciq",
+        "timestamp": "2025-02-12T08:19:05.377328Z"
+      },
+      {
+        "order_id": "O4DH2N-RQ2TC-TMRMDX",
+        "symbol": "BTC/USD",
+        "order_qty": 0.00005000,
+        "cum_cost": 0.00000,
+        "time_in_force": "GTC",
+        "exec_type": "new",
+        "side": "sell",
+        "order_type": "limit",
+        "order_userref": 0,
+        "limit_price_type": "static",
+        "limit_price": 97000.0,
+        "stop_price": 0.0,
+        "order_status": "new",
+        "fee_usd_equiv": 0.00000,
+        "fee_ccy_pref": "fciq",
+        "timestamp": "2025-02-12T08:18:59.428187Z"
+      },
+      {
+        "order_id": "O64PCC-RXAAS-IXT5A7",
+        "exec_id": "TD4XAV-K22KV-CWNX5S",
+        "exec_type": "trade",
+        "trade_id": 79790843,
+        "symbol": "BTC/USD",
+        "side": "buy",
+        "last_qty": 0.00015177,
+        "last_price": 96200.0,
+        "liquidity_ind": "t",
+        "cost": 14.60000,
+        "order_userref": 0,
+        "order_status": "filled",
+        "order_type": "market",
+        "fee_usd_equiv": 0.05840,
+        "fees": [
+          {
+            "asset": "USD",
+            "qty": 0.05840
+          }
+        ],
+        "timestamp": "2025-02-12T08:15:04.091467Z"
+      },
+      {
+        "order_id": "OLSF57-IFNJQ-3MO5XK",
+        "exec_id": "T7OITO-NOWJO-U2WVVZ",
+        "exec_type": "trade",
+        "trade_id": 79790832,
+        "symbol": "BTC/USD",
+        "side": "sell",
+        "last_qty": 0.00005000,
+        "last_price": 96199.9,
+        "liquidity_ind": "t",
+        "cost": 4.81000,
+        "order_userref": 0,
+        "order_status": "filled",
+        "order_type": "limit",
+        "fee_usd_equiv": 0.01924,
+        "fees": [
+          {
+            "asset": "USD",
+            "qty": 0.01924
+          }
+        ],
+        "timestamp": "2025-02-12T08:13:47.084247Z"
+      },
+      {
+        "order_id": "OPSUMM-APDZ7-UL66RT",
+        "exec_id": "TLKJS4-H4KSJ-HLEBUW",
+        "exec_type": "trade",
+        "trade_id": 19158,
+        "symbol": "BERA/USD",
+        "side": "sell",
+        "last_qty": 1.73598,
+        "last_price": 5.516,
+        "liquidity_ind": "t",
+        "cost": 9.57567,
+        "order_userref": 0,
+        "order_status": "filled",
+        "order_type": "market",
+        "fee_usd_equiv": 0.03830,
+        "fees": [
+          {
+            "asset": "USD",
+            "qty": 0.03830
+          }
+        ],
+        "timestamp": "2025-02-12T07:37:58.954844Z"
+      },
+      {
+        "order_id": "O2FCH3-KOXLG-VUEYRU",
+        "exec_id": "TMIYJP-P6AWF-GXR2K6",
+        "exec_type": "trade",
+        "trade_id": 19149,
+        "symbol": "BERA/USD",
+        "side": "buy",
+        "last_qty": 1.73598,
+        "last_price": 5.530,
+        "liquidity_ind": "m",
+        "cost": 9.59997,
+        "order_userref": 0,
+        "order_status": "filled",
+        "order_type": "limit",
+        "fee_usd_equiv": 0.02400,
+        "fees": [
+          {
+            "asset": "USD",
+            "qty": 0.02400
+          }
+        ],
+        "timestamp": "2025-02-12T07:37:01.261539Z"
+      },
+      {
+        "order_id": "OYM7W6-QQS2T-45EWK3",
+        "exec_id": "TRFC66-AUWX3-LMS3BI",
+        "exec_type": "trade",
+        "trade_id": 488448,
+        "symbol": "SAMO/USD",
+        "side": "sell",
+        "last_qty": 2429.09352616,
+        "last_price": 0.004037,
+        "liquidity_ind": "t",
+        "cost": 9.80625057,
+        "order_userref": 0,
+        "order_status": "filled",
+        "order_type": "market",
+        "fee_usd_equiv": 0.03922500,
+        "fees": [
+          {
+            "asset": "USD",
+            "qty": 0.03922500
+          }
+        ],
+        "timestamp": "2025-02-12T07:19:06.168121Z"
+      },
+      {
+        "order_id": "OXC324-WY7MU-R7ADTB",
+        "exec_id": "TGNPN3-KCGXR-FX6HGM",
+        "exec_type": "trade",
+        "trade_id": 488447,
+        "symbol": "SAMO/USD",
+        "side": "buy",
+        "last_qty": 2438.84892086,
+        "last_price": 0.004117,
+        "liquidity_ind": "t",
+        "cost": 10.04074101,
+        "order_userref": 0,
+        "order_status": "filled",
+        "order_type": "limit",
+        "fee_usd_equiv": 0.04016296,
+        "fees": [
+          {
+            "asset": "USD",
+            "qty": 0.04016296
+          }
+        ],
+        "timestamp": "2025-02-12T07:18:38.093107Z"
+      },
+      {
+        "order_id": "ONUNU3-3L3JI-SS7I7D",
+        "exec_id": "T63WY4-5JNXY-A7INWR",
+        "exec_type": "trade",
+        "trade_id": 79789862,
+        "symbol": "BTC/USD",
+        "side": "sell",
+        "last_qty": 0.00005000,
+        "last_price": 95862.9,
+        "liquidity_ind": "t",
+        "cost": 4.79315,
+        "order_userref": 0,
+        "order_status": "filled",
+        "order_type": "market",
+        "fee_usd_equiv": 0.01917,
+        "fees": [
+          {
+            "asset": "USD",
+            "qty": 0.01917
+          }
+        ],
+        "timestamp": "2025-02-12T07:05:38.827395Z"
+      },
+      {
+        "order_id": "OOP3PS-GS3YQ-2S766N",
+        "exec_id": "TEAD5R-H4BEY-XRESVZ",
+        "exec_type": "trade",
+        "trade_id": 79789750,
+        "symbol": "BTC/USD",
+        "side": "buy",
+        "last_qty": 0.00005218,
+        "last_price": 95815.7,
+        "liquidity_ind": "t",
+        "cost": 5.00000,
+        "order_userref": 0,
+        "order_status": "filled",
+        "order_type": "market",
+        "fee_usd_equiv": 0.02000,
+        "fees": [
+          {
+            "asset": "USD",
+            "qty": 0.02000
+          }
+        ],
+        "timestamp": "2025-02-12T06:51:00.856209Z"
+      },
+      {
+        "order_id": "OOBB2Z-HEQ74-QULD5B",
+        "exec_id": "TUFCMK-GECAU-EZEACQ",
+        "exec_type": "trade",
+        "trade_id": 79617985,
+        "symbol": "BTC/USD",
+        "side": "sell",
+        "last_qty": 0.00005000,
+        "last_price": 97613.3,
+        "liquidity_ind": "t",
+        "cost": 4.88067,
+        "order_userref": 0,
+        "order_status": "filled",
+        "order_type": "limit",
+        "fee_usd_equiv": 0.01952,
+        "fees": [
+          {
+            "asset": "USD",
+            "qty": 0.01952
+          }
+        ],
+        "timestamp": "2025-02-05T17:24:40.147628Z"
+      },
+      {
+        "order_id": "OMRHK2-P7LLK-STLDAO",
+        "exec_id": "TLGNVQ-SIIK5-NP2HWB",
+        "exec_type": "trade",
+        "trade_id": 79617597,
+        "symbol": "BTC/USD",
+        "side": "sell",
+        "last_qty": 0.00005000,
+        "last_price": 98162.9,
+        "liquidity_ind": "t",
+        "cost": 4.90815,
+        "order_userref": 0,
+        "order_status": "filled",
+        "order_type": "limit",
+        "fee_usd_equiv": 0.01963,
+        "fees": [
+          {
+            "asset": "USD",
+            "qty": 0.01963
+          }
+        ],
+        "timestamp": "2025-02-05T17:08:24.702909Z"
+      },
+      {
+        "order_id": "OZ7DN2-5HTQW-ZG6TZZ",
+        "exec_id": "TZEOPV-RQBVR-4CVHIU",
+        "exec_type": "trade",
+        "trade_id": 79617389,
+        "symbol": "BTC/USD",
+        "side": "buy",
+        "last_qty": 0.00009261,
+        "last_price": 98081.9,
+        "liquidity_ind": "t",
+        "cost": 9.08336,
+        "order_userref": 0,
+        "order_status": "filled",
+        "order_type": "limit",
+        "fee_usd_equiv": 0.03633,
+        "fees": [
+          {
+            "asset": "USD",
+            "qty": 0.03633
+          }
+        ],
+        "timestamp": "2025-02-05T16:58:41.878243Z"
+      },
+      {
+        "order_id": "OX5NED-RLFRS-HVKWEU",
+        "exec_id": "TCKAKP-7SCTN-5IC325",
+        "exec_type": "trade",
+        "trade_id": 79617026,
+        "symbol": "BTC/USD",
+        "side": "sell",
+        "last_qty": 0.00005000,
+        "last_price": 97660.0,
+        "liquidity_ind": "t",
+        "cost": 4.88300,
+        "order_userref": 0,
+        "order_status": "filled",
+        "order_type": "market",
+        "fee_usd_equiv": 0.01953,
+        "fees": [
+          {
+            "asset": "USD",
+            "qty": 0.01953
+          }
+        ],
+        "timestamp": "2025-02-05T16:44:17.593278Z"
+      },
+      {
+        "order_id": "OIYUSQ-V5QU3-WGARW5",
+        "exec_id": "T3ZLC2-WTM3Z-GO4PVO",
+        "exec_type": "trade",
+        "trade_id": 79616907,
+        "symbol": "BTC/USD",
+        "side": "buy",
+        "last_qty": 0.00005119,
+        "last_price": 97677.5,
+        "liquidity_ind": "t",
+        "cost": 5.00000,
+        "order_userref": 0,
+        "order_status": "filled",
+        "order_type": "market",
+        "fee_usd_equiv": 0.02000,
+        "fees": [
+          {
+            "asset": "USD",
+            "qty": 0.02000
+          }
+        ],
+        "timestamp": "2025-02-05T16:35:56.189309Z"
+      },
+      {
+        "order_id": "OWAGC2-UIGB7-VYYNLW",
+        "exec_id": "TERP3H-Z2KCK-QCHLCO",
+        "exec_type": "trade",
+        "trade_id": 79589226,
+        "symbol": "BTC/USD",
+        "side": "sell",
+        "last_qty": 0.00005000,
+        "last_price": 99492.0,
+        "liquidity_ind": "m",
+        "cost": 4.97460,
+        "order_userref": 0,
+        "order_status": "filled",
+        "order_type": "limit",
+        "fee_usd_equiv": 0.01244,
+        "fees": [
+          {
+            "asset": "USD",
+            "qty": 0.01244
+          }
+        ],
+        "timestamp": "2025-02-04T18:50:12.016778Z"
+      },
+      {
+        "order_id": "OOHR7A-QQTE2-DBTGTN",
+        "exec_id": "TGE553-4ZXCF-SORTJK",
+        "exec_type": "trade",
+        "trade_id": 78206507,
+        "symbol": "BTC/USD",
+        "side": "sell",
+        "last_qty": 0.00005000,
+        "last_price": 100000.0,
+        "liquidity_ind": "m",
+        "cost": 5.00000,
+        "order_userref": 0,
+        "order_status": "filled",
+        "order_type": "limit",
+        "fee_usd_equiv": 0.01250,
+        "fees": [
+          {
+            "asset": "USD",
+            "qty": 0.01250
+          }
+        ],
+        "timestamp": "2025-01-06T14:48:54.775138Z"
+      }
+    ],
+    "sequence": 1
+  }
+
+]

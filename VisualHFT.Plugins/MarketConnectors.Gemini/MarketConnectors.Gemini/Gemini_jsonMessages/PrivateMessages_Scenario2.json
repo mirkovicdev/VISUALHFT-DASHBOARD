@@ -1,0 +1,96 @@
+[
+  [
+    {
+      "type": "accepted",
+      "order_id": "73795636390703106",
+      "event_id": "1738042352775170",
+      "account_name": "primary",
+      "client_order_id": "e027d75e-6567-4055-aa73-55e60cdac494",
+      "api_session": "web",
+      "symbol": "BTCUSD",
+      "side": "sell",
+      "order_type": "exchange limit",
+      "timestamp": "1740384951",
+      "timestampms": 1740384951654,
+      "is_live": true,
+      "is_cancelled": false,
+      "is_hidden": false,
+      "original_amount": "1",
+      "price": "105883.96",
+      "socket_sequence": 3
+    }
+  ],
+  [
+    {
+      "type": "booked",
+      "order_id": "73795636390703106",
+      "event_id": "1738042352775170",
+      "account_name": "primary",
+      "client_order_id": "e027d75e-6567-4055-aa73-55e60cdac494",
+      "api_session": "web",
+      "symbol": "BTCUSD",
+      "side": "sell",
+      "order_type": "exchange limit",
+      "timestamp": "1740384951",
+      "timestampms": 1740384951654,
+      "is_live": true,
+      "is_cancelled": false,
+      "is_hidden": false,
+      "avg_execution_price": "0.00",
+      "executed_amount": "0",
+      "remaining_amount": "1",
+      "original_amount": "1",
+      "price": "105883.96",
+      "socket_sequence": 4
+    }
+  ],
+  [
+    {
+      "type": "cancelled",
+      "order_id": "73795636390703106",
+      "event_id": "1738042352775547",
+      "reason": "Requested",
+      "account_name": "primary",
+      "client_order_id": "e027d75e-6567-4055-aa73-55e60cdac494",
+      "api_session": "web",
+      "symbol": "BTCUSD",
+      "side": "sell",
+      "order_type": "exchange limit",
+      "timestamp": "1740384965",
+      "timestampms": 1740384965092,
+      "is_live": false,
+      "is_cancelled": true,
+      "is_hidden": false,
+      "avg_execution_price": "0.00",
+      "executed_amount": "0",
+      "remaining_amount": "1",
+      "original_amount": "1",
+      "price": "105883.96",
+      "socket_sequence": 8
+    }
+  ],
+  [
+    {
+      "type": "closed",
+      "order_id": "73795636390703106",
+      "event_id": "1738042352775547",
+      "account_name": "primary",
+      "client_order_id": "e027d75e-6567-4055-aa73-55e60cdac494",
+      "api_session": "web",
+      "symbol": "BTCUSD",
+      "side": "sell",
+      "order_type": "exchange limit",
+      "timestamp": "1740384965",
+      "timestampms": 1740384965092,
+      "is_live": false,
+      "is_cancelled": true,
+      "is_hidden": false,
+      "avg_execution_price": "0.00",
+      "executed_amount": "0",
+      "remaining_amount": "1",
+      "original_amount": "1",
+      "price": "105883.96",
+      "socket_sequence": 9
+    }
+  ]
+]

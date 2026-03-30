@@ -1,0 +1,79 @@
+[
+
+  [
+    {
+      "type": "accepted",
+      "order_id": "73795636390705708",
+      "event_id": "1738042352777772",
+      "account_name": "primary",
+      "client_order_id": "19a42fbb-4ede-440d-bd30-0ad4770ca67d",
+      "api_session": "web",
+      "symbol": "BTCUSD",
+      "side": "buy",
+      "order_type": "market buy",
+      "timestamp": "1740385027",
+      "timestampms": 1740385027545,
+      "is_live": true,
+      "is_cancelled": false,
+      "is_hidden": false,
+      "original_amount": "0.01036799",
+      "total_spend": "1000.00",
+      "socket_sequence": 5
+    }
+  ],
+  [
+    {
+      "type": "fill",
+      "order_id": "73795636390705708",
+      "account_name": "primary",
+      "client_order_id": "19a42fbb-4ede-440d-bd30-0ad4770ca67d",
+      "api_session": "web",
+      "symbol": "BTCUSD",
+      "side": "buy",
+      "order_type": "market buy",
+      "timestamp": "1740385027",
+      "timestampms": 1740385027545,
+      "is_live": false,
+      "is_cancelled": false,
+      "is_hidden": false,
+      "avg_execution_price": "96258.15",
+      "executed_amount": "0.01036799",
+      "remaining_amount": "0",
+      "original_amount": "0.01036799",
+      "total_spend": "1000.00",
+      "fill": {
+        "trade_id": "2840141248863835",
+        "liquidity": "Taker",
+        "price": "96258.15",
+        "amount": "0.01036799",
+        "fee": "1.996",
+        "fee_currency": "USD"
+      },
+      "socket_sequence": 6
+    }
+  ],
+  [
+    {
+      "type": "closed",
+      "order_id": "73795636390705708",
+      "event_id": "1738042352777772",
+      "account_name": "primary",
+      "client_order_id": "19a42fbb-4ede-440d-bd30-0ad4770ca67d",
+      "api_session": "web",
+      "symbol": "BTCUSD",
+      "side": "buy",
+      "order_type": "market buy",
+      "timestamp": "1740385027",
+      "timestampms": 1740385027545,
+      "is_live": false,
+      "is_cancelled": false,
+      "is_hidden": false,
+      "avg_execution_price": "96258.15",
+      "executed_amount": "0.01036799",
+      "remaining_amount": "0",
+      "original_amount": "0.01036799",
+      "total_spend": "1000.00",
+      "socket_sequence": 7
+    }
+  ]
+]

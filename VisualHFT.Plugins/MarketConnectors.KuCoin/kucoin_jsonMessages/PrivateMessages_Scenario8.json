@@ -1,0 +1,47 @@
+[
+  {
+    "topic": "/spotMarket/tradeOrdersV2",
+    "type": "message",
+    "subject": "orderChange",
+    "userId": "672a2fb85539550001f98b7c",
+    "channelType": "private",
+    "data": {
+      "orderId": "vsav8pu8e9gjhdro003rcp1l",
+      "orderTime": 1741189845112,
+      "orderType": "limit",
+      "originSize": "349.6503",
+      "price": "0.00143",
+      "pt": 1741189845148,
+      "side": "sell",
+      "status": "new",
+      "symbol": "BULL-USDT",
+      "ts": 1741189845147000000,
+      "type": "received"
+    }
+  },
+  {
+    "topic": "/spotMarket/tradeOrdersV2",
+    "type": "message",
+    "subject": "orderChange",
+    "userId": "672a2fb85539550001f98b7c",
+    "channelType": "private",
+    "data": {
+      "canceledSize": "0.0",
+      "filledSize": "349.6503",
+      "orderId": "vsav8pu8e9gjhdro003rcp1l",
+      "orderTime": 1741189845112,
+      "orderType": "limit",
+      "originSize": "349.6503",
+      "price": "0.00143",
+      "pt": 1741189845148,
+      "remainFunds": "0",
+      "remainSize": "0",
+      "side": "sell",
+      "size": "349.6503",
+      "status": "done",
+      "symbol": "BULL-USDT",
+      "ts": 1741189845147000000,
+      "type": "filled"
+    }
+  }
+]

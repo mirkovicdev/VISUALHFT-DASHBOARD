@@ -1,0 +1,10 @@
+VisualHFT
+Copyright 2023 silahian (https://github.com/silahian/VisualHFT)
+
+This product includes software developed by silahian under the Apache License 2.0.
+Original project: https://github.com/silahian/VisualHFT
+
+Modifications by QuantFrame (quantframe.io):
+- Added VisualHFT.WebServer project (WebSocket bridge for headless operation)
+- Added visualhft-ui (Next.js real-time dashboard frontend)
+- Original C# backend, plugins, and commons remain largely unmodified

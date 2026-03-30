@@ -1,0 +1,58 @@
+[
+  {
+    "channel": "executions",
+    "type": "update",
+    "data": [
+      {
+        "order_id": "ONUNU3-3L3JI-SS7I7D",
+        "symbol": "BTC/USD",
+        "order_qty": 0.00005000,
+        "cum_cost": 0.00000,
+        "time_in_force": "GTC",
+        "exec_type": "pending_new",
+        "side": "sell",
+        "order_type": "market",
+        "order_userref": 0,
+        "limit_price": 0.0,
+        "stop_price": 0.0,
+        "order_status": "pending_new",
+        "fee_usd_equiv": 0.00000,
+        "fee_ccy_pref": "fciq",
+        "timestamp": "2025-02-12T07:05:38.827395Z"
+      }
+    ],
+    "sequence": 2
+  },
+  {
+    "channel": "executions",
+    "type": "update",
+    "data": [
+      {
+        "timestamp": "2025-02-12T07:05:38.827395Z",
+        "order_status": "new",
+        "exec_type": "new",
+        "order_userref": 0,
+        "order_id": "ONUNU3-3L3JI-SS7I7D"
+      }
+    ],
+    "sequence": 3
+  },
+  {
+    "channel": "executions",
+    "type": "update",
+    "data": [
+      {
+        "timestamp": "2025-02-12T07:05:38.827395Z",
+        "order_status": "filled",
+        "exec_type": "filled",
+        "cum_qty": 0.00005000,
+        "cum_cost": 4.79315,
+        "fee_usd_equiv": 0.01917,
+        "avg_price": 95863.0,
+        "order_userref": 0,
+        "order_id": "ONUNU3-3L3JI-SS7I7D"
+      }
+    ],
+    "sequence": 5
+  }
+]

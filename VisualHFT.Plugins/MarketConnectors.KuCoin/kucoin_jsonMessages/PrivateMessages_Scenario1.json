@@ -1,0 +1,69 @@
+[
+  {
+    "topic": "/spotMarket/tradeOrdersV2",
+    "type": "message",
+    "subject": "orderChange",
+    "userId": "67448f9cc6c00c000111b216",
+    "channelType": "private",
+    "data": {
+      "orderId": "67496b0ef61fa00007de232e",
+      "orderTime": 1732864782451,
+      "orderType": "limit",
+      "originSize": "0.00001",
+      "price": "99000",
+      "side": "sell",
+      "status": "new",
+      "symbol": "BTC-USDT",
+      "ts": 1732864782492000000,
+      "type": "received"
+    }
+  },
+  {
+    "topic": "/spotMarket/tradeOrdersV2",
+    "type": "message",
+    "subject": "orderChange",
+    "userId": "67448f9cc6c00c000111b216",
+    "channelType": "private",
+    "data": {
+      "canceledSize": "0",
+      "filledSize": "0",
+      "orderId": "67496b0ef61fa00007de232e",
+      "orderTime": 1732864782451,
+      "orderType": "limit",
+      "originSize": "0.00001",
+      "price": "99000",
+      "remainSize": "0.00001",
+      "side": "sell",
+      "size": "0.00001",
+      "status": "open",
+      "symbol": "BTC-USDT",
+      "ts": 1732864782492000000,
+      "type": "open"
+    }
+  },
+  {
+    "topic": "/spotMarket/tradeOrdersV2",
+    "type": "message",
+    "subject": "orderChange",
+    "userId": "67448f9cc6c00c000111b216",
+    "channelType": "private",
+    "data": {
+      "canceledSize": "0.00001",
+      "filledSize": "0",
+      "orderId": "67496b0ef61fa00007de232e",
+      "orderTime": 1732864782451,
+      "orderType": "limit",
+      "originSize": "0.00001",
+      "price": "99000",
+      "remainFunds": "0",
+      "remainSize": "0",
+      "side": "sell",
+      "size": "0.00001",
+      "status": "done",
+      "symbol": "BTC-USDT",
+      "ts": 1732864951794000000,
+      "type": "canceled"
+    }
+  }
+ 
+]

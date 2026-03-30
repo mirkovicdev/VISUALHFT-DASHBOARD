@@ -1,0 +1,195 @@
+using System;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using Kraken.Net.Objects.Models.Socket;
+
+public class KrakenOrderUpdateConverter : JsonConverter<KrakenOrderUpdate>
+{
+    public override KrakenOrderUpdate Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    {
+        if (reader.TokenType != JsonTokenType.StartObject)
+            throw new JsonException();
+
+        var orderUpdate = new KrakenOrderUpdate();
+
+        while (reader.Read())
+        {
+            if (reader.TokenType == JsonTokenType.EndObject)
+                return orderUpdate;
+
+            if (reader.TokenType != JsonTokenType.PropertyName)
+                throw new JsonException();
+
+            string propertyName = reader.GetString();
+            reader.Read();
+
+            switch (propertyName)
+            {
+                case "order_id":
+                    orderUpdate.OrderId = reader.GetString();
+                    break;
+                case "symbol":
+                    orderUpdate.Symbol = reader.GetString();
+                    break;
+                case "cl_ord_id":
+                    orderUpdate.ClientOrderId = reader.GetString();
+                    break;
+                case "cash_order_qty":
+                    orderUpdate.QuoteOrderQuantity = reader.GetDecimal();
+                    break;
+                case "order_qty":
+                    orderUpdate.OrderQuantity = reader.GetDecimal();
+                    break;
+                case "cum_cost":
+                    orderUpdate.ValueFilled = reader.GetDecimal();
+                    break;
+                case "cum_qty":
+                    orderUpdate.QuantityFilled = reader.GetDecimal();
+                    break;
+                case "display_qty":
+                    orderUpdate.IcebergQuantity = reader.GetDecimal();
+                    break;
+                case "time_in_force":
+                    orderUpdate.TimeInForce = JsonSerializer.Deserialize<TimeInForce>(ref reader, options);
+                    break;
+                case "exec_type":
+                    orderUpdate.OrderEventType = JsonSerializer.Deserialize<OrderEventType>(ref reader, options);
+                    break;
+                case "side":
+                    orderUpdate.OrderSide = JsonSerializer.Deserialize<OrderSide>(ref reader, options);
+                    break;
+                case "order_type":
+                    orderUpdate.OrderType = JsonSerializer.Deserialize<OrderType>(ref reader, options);
+                    break;
+                case "order_userref":
+                    orderUpdate.OrderUserReference = reader.GetDecimal();
+                    break;
+                case "limit_price":
+                    orderUpdate.LimitPrice = reader.GetDecimal();
+                    break;
+                case "stop_price":
+                    orderUpdate.StopPrice = reader.GetDecimal();
+                    break;
+                case "order_status":
+                    orderUpdate.OrderStatus = JsonSerializer.Deserialize<OrderStatusUpdate>(ref reader, options);
+                    break;
+                case "fee_usd_equiv":
+                    orderUpdate.FeeUsdEquiv = reader.GetDecimal();
+                    break;
+                case "fee_ccy_pref":
+                    orderUpdate.FeeAssetPreference = JsonSerializer.Deserialize<OrderFlags>(ref reader, options);
+                    break;
+                case "effective_time":
+                    orderUpdate.EffectiveTime = reader.GetDateTime();
+                    break;
+                case "expire_time":
+                    orderUpdate.ExpireTime = reader.GetDateTime();
+                    break;
+                case "timestamp":
+                    orderUpdate.Timestamp = reader.GetDateTime();
+                    break;
+                case "avg_price":
+                    orderUpdate.AveragePrice = reader.GetDecimal();
+                    break;
+                case "fees":
+                    orderUpdate.Fees = JsonSerializer.Deserialize<IEnumerable<KrakenOrderUpdateFee>>(ref reader, options);
+                    break;
+                case "amended":
+                    orderUpdate.Amended = reader.GetBoolean();
+                    break;
+                case "liquidated":
+                    orderUpdate.Liquidated = reader.GetBoolean();
+                    break;
+                case "margin":
+                    orderUpdate.Margin = reader.GetBoolean();
+                    break;
+                case "margin_borrow":
+                    orderUpdate.MarginBorrow = reader.GetBoolean();
+                    break;
+                case "no_mpp":
+                    orderUpdate.NoMarketPriceProtection = reader.GetBoolean();
+                    break;
+                case "post_only":
+                    orderUpdate.PostOnly = reader.GetBoolean();
+                    break;
+                case "reduce_only":
+                    orderUpdate.ReduceOnly = reader.GetBoolean();
+                    break;
+                case "position_status":
+                    orderUpdate.PositionStatus = reader.GetString();
+                    break;
+                case "reason":
+                    orderUpdate.Reason = reader.GetString();
+                    break;
+                case "exec_id":
+                    orderUpdate.ExecutionId = reader.GetString();
+                    break;
+                case "trade_id":
+                    orderUpdate.LastTradeId = reader.GetInt64();
+                    break;
+                case "last_qty":
+                    orderUpdate.LastTradeQuantity = reader.GetDecimal();
+                    break;
+                case "last_price":
+                    orderUpdate.LastTradePrice = reader.GetDecimal();
+                    break;
+                case "cost":
+                    orderUpdate.LastTradeValue = reader.GetDecimal();
+                    break;
+                case "liquidity_ind":
+                    orderUpdate.LastTradeRole = JsonSerializer.Deserialize<TradeType>(ref reader, options);
+                    break;
+                default:
+                    throw new JsonException();
+            }
+        }
+
+        throw new JsonException();
+    }
+
+    public override void Write(Utf8JsonWriter writer, KrakenOrderUpdate value, JsonSerializerOptions options)
+    {
+        writer.WriteStartObject();
+
+        writer.WriteString("order_id", value.OrderId);
+        writer.WriteString("symbol", value.Symbol);
+        writer.WriteString("cl_ord_id", value.ClientOrderId);
+        writer.WriteNumber("cash_order_qty", value.QuoteOrderQuantity ?? 0);
+        writer.WriteNumber("order_qty", value.OrderQuantity ?? 0);
+        writer.WriteNumber("cum_cost", value.ValueFilled ?? 0);
+        writer.WriteNumber("cum_qty", value.QuantityFilled ?? 0);
+        writer.WriteNumber("display_qty", value.IcebergQuantity ?? 0);
+        writer.WriteString("time_in_force", JsonSerializer.Serialize(value.TimeInForce, options));
+        writer.WriteString("exec_type", JsonSerializer.Serialize(value.OrderEventType, options));
+        writer.WriteString("side", JsonSerializer.Serialize(value.OrderSide, options));
+        writer.WriteString("order_type", JsonSerializer.Serialize(value.OrderType, options));
+        writer.WriteNumber("order_userref", value.OrderUserReference);
+        writer.WriteNumber("limit_price", value.LimitPrice ?? 0);
+        writer.WriteNumber("stop_price", value.StopPrice ?? 0);
+        writer.WriteString("order_status", JsonSerializer.Serialize(value.OrderStatus, options));
+        writer.WriteNumber("fee_usd_equiv", value.FeeUsdEquiv ?? 0);
+        writer.WriteString("fee_ccy_pref", JsonSerializer.Serialize(value.FeeAssetPreference, options));
+        writer.WriteString("effective_time", value.EffectiveTime?.ToString("o"));
+        writer.WriteString("expire_time", value.ExpireTime?.ToString("o"));
+        writer.WriteString("timestamp", value.Timestamp.ToString("o"));
+        writer.WriteNumber("avg_price", value.AveragePrice ?? 0);
+        writer.WriteString("fees", JsonSerializer.Serialize(value.Fees, options));
+        writer.WriteBoolean("amended", value.Amended ?? false);
+        writer.WriteBoolean("liquidated", value.Liquidated ?? false);
+        writer.WriteBoolean("margin", value.Margin ?? false);
+        writer.WriteBoolean("margin_borrow", value.MarginBorrow ?? false);
+        writer.WriteBoolean("no_mpp", value.NoMarketPriceProtection ?? false);
+        writer.WriteBoolean("post_only", value.PostOnly ?? false);
+        writer.WriteBoolean("reduce_only", value.ReduceOnly ?? false);
+        writer.WriteString("position_status", value.PositionStatus);
+        writer.WriteString("reason", value.Reason);
+        writer.WriteString("exec_id", value.ExecutionId);
+        writer.WriteNumber("trade_id", value.LastTradeId ?? 0);
+        writer.WriteNumber("last_qty", value.LastTradeQuantity ?? 0);
+        writer.WriteNumber("last_price", value.LastTradePrice ?? 0);
+        writer.WriteNumber("cost", value.LastTradeValue ?? 0);
+        writer.WriteString("liquidity_ind", JsonSerializer.Serialize(value.LastTradeRole, options));
+
+        writer.WriteEndObject();
+    }
+}

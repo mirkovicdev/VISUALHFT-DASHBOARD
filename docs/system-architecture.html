@@ -1,0 +1,296 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VisualHFT: Interactive Architectural Blueprint</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        .page-content {
+            display: none;
+        }
+
+            .page-content.active {
+                display: block;
+            }
+    </style>
+</head>
+<body class="font-sans">
+
+    <header class="bg-white shadow-sm sticky top-0 z-10">
+        <div class="container mx-auto px-4 md:px-8 py-4">
+            <h1 class="text-2xl font-extrabold text-[#0d0c22]">VisualHFT: The Architecture (interactive)</h1>
+        </div>
+    </header>
+
+    <div class="container mx-auto p-4 md:p-8">
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            <aside class="lg:col-span-1">
+                <div class="bg-white p-4 rounded-lg shadow-lg sticky top-24">
+                    <nav id="main-nav" class="space-y-1">
+                        <button data-page="Architecture" class="nav-link w-full text-left px-4 py-2 rounded-md text-sm font-medium transition-colors bg-blue-100 text-blue-700">Architecture</button>
+                        <button data-page="Data Flow" class="nav-link w-full text-left px-4 py-2 rounded-md text-sm font-medium transition-colors text-gray-600 hover:bg-gray-100 hover:text-gray-900">Data Flow</button>
+                        <button data-page="Performance" class="nav-link w-full text-left px-4 py-2 rounded-md text-sm font-medium transition-colors text-gray-600 hover:bg-gray-100 hover:text-gray-900">Performance</button>
+                        <button data-page="Plugins" class="nav-link w-full text-left px-4 py-2 rounded-md text-sm font-medium transition-colors text-gray-600 hover:bg-gray-100 hover:text-gray-900">Plugins</button>
+                        <button data-page="VPIN Study" class="nav-link w-full text-left px-4 py-2 rounded-md text-sm font-medium transition-colors text-gray-600 hover:bg-gray-100 hover:text-gray-900">VPIN Study</button>
+                        <button data-page="Tech Stack" class="nav-link w-full text-left px-4 py-2 rounded-md text-sm font-medium transition-colors text-gray-600 hover:bg-gray-100 hover:text-gray-900">Tech Stack</button>
+                    </nav>
+                </div>
+            </aside>
+            <main class="lg:col-span-3">
+                <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
+
+                    <!-- Architecture Page -->
+                    <div id="Architecture" class="page-content active">
+                        <h2 class="text-3xl font-bold text-center text-[#0d0c22] mb-10">System Architecture: The Three Tiers</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+                            <div class="bg-white p-6 rounded-lg shadow-lg border-t-4 border-[#4f46e5] h-full text-center">
+                                <h3 class="text-xl font-bold text-[#4f46e5]">1. Presentation Layer (WPF)</h3>
+                                <p class="mt-2 text-sm text-gray-600">The user-facing GUI, built with a strict MVVM pattern. Views (`.xaml`) are decoupled from logic (`ViewModels`), with data binding automated by Fody for clean, maintainable code.</p>
+                            </div>
+                            <div class="bg-white p-6 rounded-lg shadow-lg border-t-4 border-[#10b981] h-full text-center">
+                                <h3 class="text-xl font-bold text-[#10b981]">2. Core Services Engine</h3>
+                                <p class="mt-2 text-sm text-gray-600">The central nervous system. Manages the plugin lifecycle (`PluginManager`) and orchestrates data flow via a high-speed, in-memory Pub/Sub data bus (`Helper` classes).</p>
+                            </div>
+                            <div class="bg-white p-6 rounded-lg shadow-lg border-t-4 border-[#ef4444] h-full text-center">
+                                <h3 class="text-xl font-bold text-[#ef4444]">3. Plugin Ecosystem</h3>
+                                <p class="mt-2 text-sm text-gray-600">Dynamically loaded DLLs that extend functionality. `Data Retrievers` connect to external sources, while `Studies` perform complex, real-time analytics.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Data Flow Page -->
+                    <div id="Data Flow" class="page-content">
+                        <h2 class="text-3xl font-bold text-center text-[#0d0c22] mb-10">Real-Time Data Flow: The Pub/Sub Bus</h2>
+                        <div class="bg-white rounded-lg shadow-lg p-8">
+                            <p class="text-center text-gray-600 mb-8">Data flows unidirectionally from producers to consumers via a decoupled, event-driven bus implemented with singleton `Helper` classes. This ensures modularity and real-time responsiveness.</p>
+                            <div class="grid grid-cols-1 md:grid-cols-5 gap-4 items-center text-center">
+                                <div class="bg-white p-4 rounded-lg shadow">
+                                    <p class="text-3xl">🔌</p>
+                                    <p class="font-bold mt-2 text-blue-700">Producer</p>
+                                    <p class="text-xs text-gray-500">Data Retriever Plugin</p>
+                                </div>
+                                <div class="text-3xl font-bold text-gray-400">→</div>
+                                <div class="bg-indigo-100 border-2 border-indigo-500 p-4 rounded-lg shadow-lg">
+                                    <p class="text-3xl">🚌</p>
+                                    <p class="font-bold text-indigo-700 mt-2">Data Bus</p>
+                                    <p class="text-xs text-gray-500">`Helper` Class</p>
+                                </div>
+                                <div class="text-3xl font-bold text-gray-400">→</div>
+                                <div class="bg-white p-4 rounded-lg shadow">
+                                    <p class="text-3xl">📈</p>
+                                    <p class="font-bold mt-2 text-green-700">Consumers</p>
+                                    <p class="text-xs text-gray-500">UI & Study Plugins</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Performance Page -->
+                    <div id="Performance" class="page-content">
+                        <h2 class="text-3xl font-bold text-center text-[#0d0c22] mb-10">Core Engine: High-Performance Engineering</h2>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            <div class="bg-white rounded-lg shadow-lg p-6 space-y-6">
+                                <div class="bg-white p-6 rounded-lg shadow-md">
+                                    <h3 class="text-xl font-bold text-[#0d0c22]">Concurrency: `BlockingCollection&lt;T&gt;`</h3>
+                                    <p class="mt-2 text-gray-600">The system uses `BlockingCollection&lt;T&gt;` for its core producer-consumer queue. This provides an efficient, thread-safe mechanism for passing data from Data Retriever threads to consumer threads without manual locking, eliminating contention and reducing CPU overhead.</p>
+                                </div>
+                                <div class="bg-white p-6 rounded-lg shadow-md">
+                                    <h3 class="text-xl font-bold text-[#0d0c22]">Memory Management: Custom Object Pools</h3>
+                                    <p class="mt-2 text-gray-600">To minimize Garbage Collector (GC) pressure and prevent unpredictable latency spikes, the platform implements custom object pools. Frequently used objects like `Trade` and `OrderBookUpdate` are recycled instead of being newly allocated, dramatically reducing memory churn.</p>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-lg shadow-lg p-6">
+                                <h3 class="text-xl font-bold text-[#0d0c22]">Optimized LOB Data Structure</h3>
+                                <p class="mt-2 text-gray-600 mb-4">The Limit Order Book is implemented with a combination of data structures to achieve optimal time complexity for all critical operations.</p>
+                                <div class="bg-[#1e293b] text-[#e2e8f0] p-4 rounded-lg font-mono text-sm whitespace-pre-wrap leading-relaxed">
+                                    <p><span class="text-cyan-400">1. Price Levels:</span> `SortedDictionary&lt;decimal, IOrderBookLevel&gt;`</p>
+                                    <p class="text-gray-400 ml-4">// O(log M) for level lookups</p>
+                                    <p class="mt-2"><span class="text-cyan-400">2. Orders at Price:</span> `LinkedList&lt;Order&gt;`</p>
+                                    <p class="text-gray-400 ml-4">// O(1) for FIFO additions/removals</p>
+                                    <p class="mt-2"><span class="text-cyan-400">3. Direct Order Lookup:</span> `Dictionary&lt;string, Order&gt;`</p>
+                                    <p class="text-gray-400 ml-4">// O(1) for cancellations/updates</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Plugins Page -->
+                    <div id="Plugins" class="page-content">
+                        <h2 class="text-3xl font-bold text-center text-[#0d0c22] mb-10">The Plugin Ecosystem: A Framework for Extensibility</h2>
+                        <div class="bg-white rounded-lg shadow-lg p-8">
+                            <p class="text-center text-gray-600 mb-8">The `PluginManager` orchestrates the entire ecosystem. At startup, it scans a `/plugins` directory, uses reflection to find all types implementing `IPlugin`, and manages their lifecycle (`Initialize`, `Start`, `Stop`).</p>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div class="border-dashed border-2 border-gray-400 p-6 rounded-lg text-center">
+                                    <h3 class="text-xl font-bold text-gray-700">Data Retriever Plugin</h3>
+                                    <p class="mt-2 text-sm text-gray-600">Connects to a data source (e.g., FIX, WebSocket), parses the native format, and publishes standardized `Model` objects to the data bus.</p>
+                                </div>
+                                <div class="border-dashed border-2 border-gray-400 p-6 rounded-lg text-center">
+                                    <h3 class="text-xl font-bold text-gray-700">Study Plugin</h3>
+                                    <p class="mt-2 text-sm text-gray-600">Subscribes to data from the bus, performs calculations (e.g., VPIN, Imbalance) in a separate thread, and publishes results back to the bus.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- VPIN Study Page -->
+                    <div id="VPIN Study" class="page-content">
+                        <h2 class="text-3xl font-bold text-center text-[#0d0c22] mb-10">Anatomy of a Study: VPIN Implementation</h2>
+                        <div class="bg-white rounded-lg shadow-lg p-8 max-w-4xl mx-auto">
+                            <p class="text-center text-gray-600 mb-8">A `VPINStudy` plugin demonstrates the platform's analytical power. It's a stateful, event-driven component that processes raw trades into a sophisticated microstructure indicator.</p>
+                            <div class="space-y-2">
+                                <div class="flex items-center"><span class="bg-purple-600 text-white rounded-full h-8 w-8 flex items-center justify-center font-bold mr-4 flex-shrink-0">1</span><p>Subscribe to `OnTrade` event from `HelperTrade` data bus.</p></div>
+                                <div class="ml-3.5 h-6 w-px bg-purple-300"></div>
+                                <div class="flex items-center"><span class="bg-purple-600 text-white rounded-full h-8 w-8 flex items-center justify-center font-bold mr-4 flex-shrink-0">2</span><p>Classify incoming trade as Buy/Sell (e.g., using Tick Rule).</p></div>
+                                <div class="ml-3.5 h-6 w-px bg-purple-300"></div>
+                                <div class="flex items-center"><span class="bg-purple-600 text-white rounded-full h-8 w-8 flex items-center justify-center font-bold mr-4 flex-shrink-0">3</span><p>Add classified volume to the current Volume Bucket.</p></div>
+                                <div class="ml-3.5 h-6 w-px bg-purple-300"></div>
+                                <div class="flex items-center"><span class="bg-purple-600 text-white rounded-full h-8 w-8 flex items-center justify-center font-bold mr-4 flex-shrink-0">4</span><p>If bucket is full: calculate imbalance, add to rolling window (queue).</p></div>
+                                <div class="ml-3.5 h-6 w-px bg-purple-300"></div>
+                                <div class="flex items-center"><span class="bg-purple-600 text-white rounded-full h-8 w-8 flex items-center justify-center font-bold mr-4 flex-shrink-0">5</span><p>Calculate new VPIN value from the rolling window.</p></div>
+                                <div class="ml-3.5 h-6 w-px bg-purple-300"></div>
+                                <div class="flex items-center"><span class="bg-purple-600 text-white rounded-full h-8 w-8 flex items-center justify-center font-bold mr-4 flex-shrink-0">6</span><p>Publish VPIN value to the data bus for UI consumption.</p></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tech Stack Page -->
+                    <div id="Tech Stack" class="page-content">
+                        <h2 class="text-3xl font-bold text-center text-[#0d0c22] mb-10">Technology Stack & Key Dependencies</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div class="bg-white rounded-lg shadow-lg p-8">
+                                <h3 class="text-xl font-bold text-[#0d0c22] mb-4">Core Stack</h3>
+                                <ul class="space-y-4 text-gray-600">
+                                    <li><span class="font-bold text-gray-800">Framework:</span> .NET 7.0</li>
+                                    <li><span class="font-bold text-gray-800">Language:</span> C#</li>
+                                    <li><span class="font-bold text-gray-800">UI:</span> Windows Presentation Foundation (WPF)</li>
+                                    <li><span class="font-bold text-gray-800">Pattern:</span> Model-View-ViewModel (MVVM)</li>
+                                    <li><span class="font-bold text-gray-800">Platform:</span> Windows Only</li>
+                                </ul>
+                            </div>
+                            <div class="bg-white rounded-lg shadow-lg p-8">
+                                <h3 class="text-xl font-bold text-[#0d0c22] mb-4">Dependency Licensing</h3>
+                                <p class="text-sm text-gray-600 mb-4">Key dependencies have licensing terms with significant implications for enterprise adoption.</p>
+                                <div class="h-64">
+                                    <canvas id="dependenciesChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <footer class="text-center mt-12 py-8 border-t border-gray-200">
+        <p class="text-gray-500">This is an interactive architectural guide for VisualHFT.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const navLinks = document.querySelectorAll('.nav-link');
+            const pages = document.querySelectorAll('.page-content');
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    const pageId = link.getAttribute('data-page');
+
+                    // Update active link style
+                    navLinks.forEach(nav => {
+                        nav.classList.remove('bg-blue-100', 'text-blue-700');
+                        nav.classList.add('text-gray-600', 'hover:bg-gray-100', 'hover:text-gray-900');
+                    });
+                    link.classList.add('bg-blue-100', 'text-blue-700');
+                    link.classList.remove('text-gray-600', 'hover:bg-gray-100', 'hover:text-gray-900');
+
+                    // Show the selected page and hide others
+                    pages.forEach(page => {
+                        if (page.id === pageId) {
+                            page.classList.add('active');
+                        } else {
+                            page.classList.remove('active');
+                        }
+                    });
+                });
+            });
+
+            // --- Chart.js Logic ---
+            const palette = {
+                blue: '#4f46e5',
+                pink: '#ec4899',
+                green: '#10b981',
+                yellow: '#f59e0b',
+                red: '#ef4444',
+                purple: '#8b5cf6',
+            };
+
+            const wrapLabel = (label) => {
+                const maxLength = 16;
+                if (label.length <= maxLength) return label;
+                const words = label.split(' ');
+                const lines = [];
+                let currentLine = '';
+                words.forEach(word => {
+                    if ((currentLine + word).length > maxLength) {
+                        lines.push(currentLine.trim());
+                        currentLine = '';
+                    }
+                    currentLine += word + ' ';
+                });
+                lines.push(currentLine.trim());
+                return lines.filter(line => line.length > 0);
+            };
+
+            const chartLabels = [
+                'Prism.Core (Dual License: Community/Commercial)',
+                'OxyPlot.Wpf (MIT)',
+                'Fody (MIT)',
+                'log4net (Apache 2.0)'
+            ].map(wrapLabel);
+
+            const chartData = [40, 25, 15, 20];
+            const ctx = document.getElementById('dependenciesChart').getContext('2d');
+
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: chartLabels,
+                    datasets: [{
+                        label: 'Dependency License',
+                        data: chartData,
+                        backgroundColor: [palette.red, palette.blue, palette.purple, palette.yellow],
+                        borderColor: '#ffffff',
+                        borderWidth: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { font: { size: 10 }, boxWidth: 15, padding: 15 } },
+                        tooltip: {
+                            callbacks: {
+                                title: (tooltipItems) => {
+                                    const item = tooltipItems[0];
+                                    let label = item.chart.data.labels[item.dataIndex];
+                                    return Array.isArray(label) ? label.join(' ') : label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

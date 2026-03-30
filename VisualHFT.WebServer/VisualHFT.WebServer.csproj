@@ -1,0 +1,46 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0-windows10.0.22621.0</TargetFramework>
+    <SupportedOSPlatformVersion>10.0.22621.0</SupportedOSPlatformVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <!-- Core library -->
+  <ItemGroup>
+    <ProjectReference Include="..\VisualHFT.Commons\VisualHFT.Commons.csproj" />
+  </ItemGroup>
+
+  <!--
+    Plugin references: these ensure plugin DLLs (and their dependencies)
+    are copied to the WebServer's output directory so HeadlessPluginLoader
+    can discover them at runtime via reflection.
+  -->
+  <ItemGroup>
+    <!-- Market Connectors -->
+    <ProjectReference Include="..\VisualHFT.Plugins\MarketConnectors.Binance\MarketConnectors.Binance.csproj" />
+    <ProjectReference Include="..\VisualHFT.Plugins\MarketConnectors.Bitfinex\MarketConnectors.Bitfinex.csproj" />
+    <ProjectReference Include="..\VisualHFT.Plugins\MarketConnectors.BitStamp\MarketConnectors.BitStamp.csproj" />
+    <ProjectReference Include="..\VisualHFT.Plugins\MarketConnectors.Coinbase\MarketConnectors.Coinbase.csproj" />
+    <ProjectReference Include="..\VisualHFT.Plugins\MarketConnectors.Kraken\MarketConnectors.Kraken.csproj" />
+    <ProjectReference Include="..\VisualHFT.Plugins\MarketConnectors.KuCoin\MarketConnectors.KuCoin.csproj" />
+    <!-- Studies -->
+    <ProjectReference Include="..\VisualHFT.Plugins\Studies.VPIN\Studies.VPIN.csproj" />
+    <ProjectReference Include="..\VisualHFT.Plugins\Studies.LOBImbalance\Studies.LOBImbalance.csproj" />
+    <ProjectReference Include="..\VisualHFT.Plugins\Studies.MarketResilience\Studies.MarketResilience.csproj" />
+    <ProjectReference Include="..\VisualHFT.Plugins\Studies.OTT_Ratio\Studies.OTT_Ratio.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="log4net" Version="3.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\log4net.config" Link="log4net.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

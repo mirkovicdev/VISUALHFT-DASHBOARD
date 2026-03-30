@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+@theme {
+  --color-terminal-bg: #0a0a0a;
+  --color-terminal-surface: #111111;
+  --color-terminal-surface-2: #161616;
+  --color-terminal-border: #1e1e1e;
+  --color-terminal-text: #cccccc;
+  --color-terminal-muted: #555555;
+  --color-terminal-dim: #333333;
+  --color-terminal-amber: #ff9f1a;
+  --color-terminal-green: #00c853;
+  --color-terminal-red: #ff1744;
+  --color-terminal-blue: #448aff;
+  --color-terminal-cyan: #00bcd4;
+  --font-mono: "JetBrains Mono", "Cascadia Code", "Fira Code", "Consolas", monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--color-terminal-bg);
+  color: var(--color-terminal-text);
+  font-family: var(--font-mono);
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-terminal-dim);
+  border-radius: 2px;
+}
+
+.fade-in-row {
+  animation: fadeIn 0.3s ease-out;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-2px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+.pulse-dot {
+  animation: pulse-dot 1.5s ease-in-out infinite;
+}

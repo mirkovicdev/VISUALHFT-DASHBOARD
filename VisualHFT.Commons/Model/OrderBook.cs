@@ -1,0 +1,946 @@
+﻿using System.Runtime.CompilerServices;
+using VisualHFT.Commons.Model;
+using VisualHFT.Commons.Pools;
+using VisualHFT.Enums;
+using VisualHFT.Helpers;
+using VisualHFT.Studies;
+
+namespace VisualHFT.Model
+{
+    public partial class OrderBook : ICloneable, IResettable, IDisposable
+    {
+        private bool _disposed = false; // to track whether the object has been disposed
+        private OrderFlowAnalysis lobMetrics = new OrderFlowAnalysis();
+
+        protected OrderBookData _data;
+        protected static readonly log4net.ILog log =
+            log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        protected static readonly CustomObjectPool<DeltaBookItem> DeltaBookItemPool =
+            new CustomObjectPool<DeltaBookItem>(1_000);
+
+        // Add counters for level changes
+        // _addedLevels: New price levels + size increases at existing levels
+        // _deletedLevels: Removed price levels + size decreases at existing levels
+        // _updatedLevels: Currently unused (reserved for future use)
+        private long _addedLevels = 0;
+        private long _deletedLevels = 0;
+        private long _updatedLevels = 0;
+        private ulong _addedVolumeScaled = 0;
+        private ulong _deletedVolumeScaled = 0;
+        private ulong _updatedVolumeScaled = 0;
+
+        // Scale cache (10^SizeDecimalPlaces)
+        private int _volumeScaleDp;
+        private ulong _volumeScale;
+
+        // Properties to expose counters
+        public OrderBook()
+        {
+            _data = new OrderBookData();
+            _volumeScaleDp = _data.SizeDecimalPlaces;
+            _volumeScale = ComputeScale(_volumeScaleDp);
+            FilterBidAskByMaxDepth = true;
+        }
+
+        public OrderBook(string symbol, int priceDecimalPlaces, int maxDepth)
+        {
+            if (maxDepth <= 0)
+                throw new ArgumentOutOfRangeException(nameof(maxDepth), "maxDepth must be greater than zero.");
+            _data = new OrderBookData(symbol, priceDecimalPlaces, maxDepth);
+            _volumeScaleDp = _data.SizeDecimalPlaces;
+            _volumeScale = ComputeScale(_volumeScaleDp);
+            FilterBidAskByMaxDepth = true;
+        }
+
+        ~OrderBook()
+        {
+            Dispose(false);
+        }
+
+        public string Symbol
+        {
+            get => _data.Symbol;
+            set => _data.Symbol = value;
+        }
+
+        public int MaxDepth
+        {
+            get => _data.MaxDepth;
+            set => _data.MaxDepth = value;
+        }
+
+        public int PriceDecimalPlaces
+        {
+            get => _data.PriceDecimalPlaces;
+            set => _data.PriceDecimalPlaces = value;
+        }
+
+        public int SizeDecimalPlaces
+        {
+            get => _data.SizeDecimalPlaces;
+            set
+            {
+                _data.SizeDecimalPlaces = value;
+                _volumeScaleDp = _data.SizeDecimalPlaces;
+                _volumeScale = ComputeScale(_volumeScaleDp);
+            }
+        }
+
+        public double SymbolMultiplier => _data.SymbolMultiplier;
+
+        public int ProviderID
+        {
+            get => _data.ProviderID;
+            set => _data.ProviderID = value;
+        }
+
+        public string ProviderName
+        {
+            get => _data.ProviderName;
+            set => _data.ProviderName = value;
+        }
+
+        public eSESSIONSTATUS ProviderStatus
+        {
+            get => _data.ProviderStatus;
+            set => _data.ProviderStatus = value;
+        }
+
+        public double MaximumCummulativeSize
+        {
+            get => _data.MaximumCummulativeSize;
+            set => _data.MaximumCummulativeSize = value;
+        }
+
+        public CachedCollection<BookItem> Asks
+        {
+            get
+            {
+                using (_data.EnterReadLock())
+                {
+                    if (_data.Asks == null)
+                        return null;
+                    if (MaxDepth > 0 && FilterBidAskByMaxDepth)
+                        return _data.Asks.Take(MaxDepth);
+                    else
+                        return _data.Asks;
+                }
+            }
+            set => _data.Asks.Update(value); //do not remove setter: it is used to auto parse json
+        }
+
+        public CachedCollection<BookItem> Bids
+        {
+            get
+            {
+                using (_data.EnterReadLock())
+                {
+                    if (_data.Bids == null)
+                        return null;
+                    if (MaxDepth > 0 && FilterBidAskByMaxDepth)
+                        return _data.Bids.Take(MaxDepth);
+                    else
+                        return _data.Bids;
+                }
+            }
+            set => _data.Bids.Update(value); //do not remove setter: it is used to auto parse json
+        }
+
+        /// <summary>
+        /// Returns a deep-copy snapshot of bids into the provided destination.
+        /// Each BookItem is copied via CopyFrom() to ensure isolation.
+        /// Returns actual count copied.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public int GetBidsSnapshot(Span<BookItem> destination)
+        {
+            ThrowIfDisposed();
+            using (_data.EnterReadLock())
+            {
+                int maxCount = MaxDepth > 0 && FilterBidAskByMaxDepth ? MaxDepth : int.MaxValue;
+                var sourceSpan = _data.GetBidsSpan(maxCount);
+
+                int countToCopy = Math.Min(sourceSpan.Length, destination.Length);
+
+                // ✅ OPTIMIZED COPY: Only copy essential per-level fields (Price, Size, IsBid, ActiveSize, CummulativeSize)
+                for (int i = 0; i < countToCopy; i++)
+                {
+                    // Reuse existing pooled item if available, otherwise get new one
+                    if (destination[i] == null)
+                    {
+                        destination[i] = BookItemPool.Get();
+                    }
+
+                    // Optimized copy - only essential fields that vary per level
+                    destination[i].CopyEssentialsFrom(sourceSpan[i]);
+                }
+
+                return countToCopy;
+            }
+        }
+
+        /// <summary>
+        /// Returns a deep-copy snapshot of asks into the provided destination.
+        /// Each BookItem is copied via CopyFrom() to ensure isolation.
+        /// Returns actual count copied.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public int GetAsksSnapshot(Span<BookItem> destination)
+        {
+            ThrowIfDisposed();
+            using (_data.EnterReadLock())
+            {
+                int maxCount = MaxDepth > 0 && FilterBidAskByMaxDepth ? MaxDepth : int.MaxValue;
+                var sourceSpan = _data.GetAsksSpan(maxCount);
+
+                int countToCopy = Math.Min(sourceSpan.Length, destination.Length);
+
+                // ✅ OPTIMIZED COPY: Only copy essential per-level fields (Price, Size, IsBid, ActiveSize, CummulativeSize)
+                for (int i = 0; i < countToCopy; i++)
+                {
+                    // Reuse existing pooled item if available, otherwise get new one
+                    if (destination[i] == null)
+                    {
+                        destination[i] = BookItemPool.Get();
+                    }
+
+                    // Optimized copy - only essential fields that vary per level
+                    destination[i].CopyEssentialsFrom(sourceSpan[i]);
+                }
+
+                return countToCopy;
+            }
+        }
+
+        public BookItem GetTOB(bool isBid)
+        {
+            using (_data.EnterReadLock())
+            {
+                return _data.GetTOB(isBid);
+            }
+        }
+
+        public double MidPrice
+        {
+            get
+            {
+                return _data.MidPrice;
+            }
+        }
+        public double Spread
+        {
+            get
+            {
+                return _data.Spread;
+            }
+        }
+        public bool FilterBidAskByMaxDepth
+        {
+            get
+            {
+                return _data.FilterBidAskByMaxDepth;
+            }
+            set
+            {
+                _data.FilterBidAskByMaxDepth = value;
+            }
+        }
+        public void GetAddDeleteUpdate(ref CachedCollection<BookItem> inputExisting, bool matchAgainsBids)
+        {
+            if (inputExisting == null)
+                return;
+            using (_data.EnterReadLock())
+            {
+                IEnumerable<BookItem> listToMatch = (matchAgainsBids ? _data.Bids : _data.Asks);
+                if (listToMatch.Count() == 0)
+                    return;
+
+                if (inputExisting.Count() == 0)
+                {
+                    foreach (var item in listToMatch)
+                    {
+                        inputExisting.Add(item);
+                    }
+
+                    return;
+                }
+
+                IEnumerable<BookItem> inputNew = listToMatch;
+                List<BookItem> outAdds;
+                List<BookItem> outUpdates;
+                List<BookItem> outRemoves;
+
+                var existingSet = inputExisting;
+                var newSet = inputNew;
+
+                outRemoves = inputExisting.Where(e => !newSet.Contains(e)).ToList();
+                outUpdates = inputNew.Where(e =>
+                    existingSet.Contains(e) && e.Size != existingSet.FirstOrDefault(i => i.Equals(e)).Size).ToList();
+                outAdds = inputNew.Where(e => !existingSet.Contains(e)).ToList();
+
+                foreach (var b in outRemoves)
+                    inputExisting.Remove(b);
+                foreach (var b in outUpdates)
+                {
+                    var itemToUpd = inputExisting.Where(x => x.Price == b.Price).FirstOrDefault();
+                    if (itemToUpd != null)
+                    {
+                        itemToUpd.Size = b.Size;
+                        itemToUpd.ActiveSize = b.ActiveSize;
+                        itemToUpd.CummulativeSize = b.CummulativeSize;
+                        itemToUpd.LocalTimeStamp = b.LocalTimeStamp;
+                        itemToUpd.ServerTimeStamp = b.ServerTimeStamp;
+                    }
+                }
+
+                foreach (var b in outAdds)
+                    inputExisting.Add(b);
+            }
+        }
+
+        public void CalculateMetrics()
+        {
+            using (_data.EnterReadLock())
+            {
+                lobMetrics.LoadData(_data.Asks, _data.Bids, MaxDepth);
+                _data.ImbalanceValue = lobMetrics.Calculate_OrderImbalance();
+            }
+        }
+        public bool LoadData(IEnumerable<BookItem> asks, IEnumerable<BookItem> bids)
+        {
+            bool ret = true;
+            using (_data.EnterWriteLock())
+            {
+                _data.Clear();
+
+                if (bids != null)
+                {
+                    foreach (var bidItem in bids)
+                    {
+                        if (bidItem == null || !bidItem.Price.HasValue || !bidItem.Size.HasValue)
+                            continue;
+                        var pooledItem = BookItemPool.Get();
+                        pooledItem.CopyFrom(bidItem);
+                        _data.Bids.AddUnsorted(pooledItem);
+                    }
+                    _data.Bids.Sort(); // Single sort (descending by price, set in OrderBookData ctor)
+                }
+
+                if (asks != null)
+                {
+                    foreach (var askItem in asks)
+                    {
+                        if (askItem == null || !askItem.Price.HasValue || !askItem.Size.HasValue)
+                            continue;
+                        var pooledItem = BookItemPool.Get();
+                        pooledItem.CopyFrom(askItem);
+                        _data.Asks.AddUnsorted(pooledItem);
+                    }
+                    _data.Asks.Sort(); // Single sort (ascending by price, set in OrderBookData ctor)
+                }
+
+                _data.CalculateAccummulated();
+            }
+            CalculateMetrics();
+
+            return ret;
+        }
+
+        public double GetMaxOrderSize()
+        {
+            double _maxOrderSize = 0;
+
+            using (_data.EnterReadLock())
+            {
+                if (_data.Bids != null)
+                {
+                    int bidsCount = _data.Bids.Count();
+                    for (int i = 0; i < bidsCount; i++)
+                    {
+                        var size = _data.Bids[i].Size;
+                        if (size.HasValue && size.Value > _maxOrderSize)
+                            _maxOrderSize = size.Value;
+                    }
+                }
+                if (_data.Asks != null)
+                {
+                    int asksCount = _data.Asks.Count();
+                    for (int i = 0; i < asksCount; i++)
+                    {
+                        var size = _data.Asks[i].Size;
+                        if (size.HasValue && size.Value > _maxOrderSize)
+                            _maxOrderSize = size.Value;
+                    }
+                }
+            }
+            return _maxOrderSize;
+        }
+
+        public (double min, double max) GetMinMaxSizes()
+        {
+            using (_data.EnterReadLock())
+            {
+                return _data.GetMinMaxSizes();
+            }
+        }
+
+        public virtual object Clone()
+        {
+            var clone = new OrderBook(_data.Symbol, _data.PriceDecimalPlaces, _data.MaxDepth);
+            clone.ProviderID = _data.ProviderID;
+            clone.ProviderName = _data.ProviderName;
+            clone.SizeDecimalPlaces = _data.SizeDecimalPlaces;
+            clone._data.ImbalanceValue = _data.ImbalanceValue;
+            clone.ProviderStatus = _data.ProviderStatus;
+            clone.MaxDepth = _data.MaxDepth;
+            clone.LoadData(Asks, Bids);
+            return clone;
+        }
+
+        public void PrintLOB(bool isBid)
+        {
+            using (_data.EnterReadLock())
+            {
+                int _level = 0;
+                foreach (var item in isBid ? _data.Bids : _data.Asks)
+                {
+                    Console.WriteLine($"{_level} - {item.FormattedPrice} [{item.Size}]");
+                    _level++;
+                }
+            }
+        }
+
+        public double ImbalanceValue
+        {
+            get => _data.ImbalanceValue;
+            set => _data.ImbalanceValue = value;
+        }
+        public long Sequence { get; set; }
+        public DateTime? LastUpdated { get; set; }
+
+        private void InternalClear()
+        {
+            int asksCount = _data.Asks.Count();
+            for (int i = asksCount - 1; i >= 0; i--)
+            {
+                var item = _data.Asks[i];
+                if (item.Price != 0)
+                {
+                    var itemToDelete = DeltaBookItemPool.Get();
+                    itemToDelete.IsBid = false;
+                    itemToDelete.Price = item.Price;
+                    DeleteLevel(itemToDelete);
+                    DeltaBookItemPool.Return(itemToDelete);
+                }
+            }
+
+            int bidsCount = _data.Bids.Count();
+            for (int i = bidsCount - 1; i >= 0; i--)
+            {
+                var item = _data.Bids[i];
+                if (item.Price != 0)
+                {
+                    var itemToDelete = DeltaBookItemPool.Get();
+                    itemToDelete.IsBid = true;
+                    itemToDelete.Price = item.Price;
+                    DeleteLevel(itemToDelete);
+                    DeltaBookItemPool.Return(itemToDelete);
+                }
+            }
+
+
+            ResetCounters();
+        }
+
+        public void UpdateSnapshot(ReadOnlySpan<BookItem> asks, ReadOnlySpan<BookItem> bids)
+        {
+            using (_data.EnterWriteLock())
+            {
+                // Clear existing data and return items to shared pool to avoid allocation
+                _data.Clear();
+
+                // Copy asks using shared pooled objects
+                if (asks != null)
+                {
+                    foreach (var askItem in asks)
+                    {
+                        if (askItem != null && askItem.Price.HasValue && askItem.Size.HasValue)
+                        {
+                            var pooledItem = BookItemPool.Get();
+                            pooledItem.CopyFrom(askItem);
+                            _data.Asks.AddUnsorted(pooledItem);
+                        }
+                    }
+                    _data.Asks.Sort();
+                }
+
+                // Copy bids using shared pooled objects
+                if (bids != null)
+                {
+                    foreach (var bidItem in bids)
+                    {
+                        if (bidItem != null && bidItem.Price.HasValue && bidItem.Size.HasValue)
+                        {
+                            var pooledItem = BookItemPool.Get();
+                            pooledItem.CopyFrom(bidItem);
+                            _data.Bids.AddUnsorted(pooledItem);
+                        }
+                    }
+                    _data.Bids.Sort();
+                }
+
+                // Calculate accumulated sizes
+                _data.CalculateAccummulated();
+            }
+
+            // Calculate metrics outside the lock for better performance
+            CalculateMetrics();
+        }
+        /// <summary>
+        /// Computes the delta needed to transform THIS order book into <paramref name="other"/>,
+        /// emitting one <see cref="DeltaBookItem"/> per changed price level (absolute size; 0 = delete).
+        /// Performance: O(N+M) per side; allocation-free (uses pooled DeltaBookItem).
+        /// IMPORTANT: <paramref name="onDelta"/> MUST consume the item synchronously and copy its data.
+        /// This method RETURNS the pooled item immediately after invoking the callback.
+        /// </summary>
+        /// <param name="other">The newer snapshot for the same venue/symbol.</param>
+        /// <param name="onDelta">
+        /// Callback that receives one pooled DeltaBookItem per change. Do not retain the reference.
+        /// Typical usage: obLocal.AddOrUpdateLevel(delta);  // which copies fields synchronously
+        /// </param>
+        public void ComputeDeltaAgainst(OrderBook other, Action<DeltaBookItem> onDelta)
+        {
+            if (other == null) throw new ArgumentNullException(nameof(other));
+            if (onDelta == null) throw new ArgumentNullException(nameof(onDelta));
+
+            // Use the existing RAII-style read locks from OrderBookData
+            using (_data.EnterReadLock())
+            {
+                using (other._data.EnterReadLock())
+                {
+                    DiffBothSides_NoAlloc_(this, other, onDelta);
+                }
+            }
+        }
+        private static void DiffBothSides_NoAlloc_(OrderBook oldBook, OrderBook newBook, Action<DeltaBookItem> emit)
+        {
+            // Access underlying storage directly to avoid MaxDepth filtering and extra wrappers.
+            var oldBids = oldBook._data.Bids;
+            var newBids = newBook._data.Bids;
+            var oldAsks = oldBook._data.Asks;
+            var newAsks = newBook._data.Asks;
+
+            DiffSide_NoAlloc_(oldBids, newBids, /*isBid*/ true, emit);
+            DiffSide_NoAlloc_(oldAsks, newAsks, /*isBid*/ false, emit);
+        }
+
+        private static void DiffSide_NoAlloc_(
+            CachedCollection<BookItem> oldSide,
+            CachedCollection<BookItem> newSide,
+            bool isBid,
+            Action<DeltaBookItem> emit)
+        {
+            int i = 0, j = 0;
+            int oldCount = oldSide == null ? 0 : oldSide.Count();
+            int newCount = newSide == null ? 0 : newSide.Count();
+
+            // Local function to emit a pooled delta and immediately return it to the pool.
+            static void Emit(bool isBidL, double price, double size, Action<DeltaBookItem> sink)
+            {
+                var d = DeltaBookItemPool.Get();
+                d.IsBid = isBidL;
+                d.Price = price;
+                d.Size = size;
+                d.LocalTimeStamp = DateTime.UtcNow; // caller may overwrite if needed
+                d.ServerTimeStamp = d.LocalTimeStamp;
+                sink(d);
+                DeltaBookItemPool.Return(d); // safe because consumer must copy synchronously
+            }
+
+            // Merge walk
+            while (i < oldCount && j < newCount)
+            {
+                var o = oldSide[i];
+                var n = newSide[j];
+
+                // Assuming exact price equality as elsewhere in the codebase (AddOrUpdateLevel uses ==).
+                double op = o.Price.GetValueOrDefault();
+                double np = n.Price.GetValueOrDefault();
+
+                if (op == np)
+                {
+                    // Same price level: update only if size changed
+                    double os = o.Size.GetValueOrDefault();
+                    double ns = n.Size.GetValueOrDefault();
+                    if (os != ns)
+                        Emit(isBid, np, ns, emit);
+
+                    i++; j++;
+                }
+                else
+                {
+                    // Determine ordering based on side sort (bids: desc, asks: asc)
+                    bool oldComesFirst = isBid ? (op > np) : (op < np);
+
+                    if (oldComesFirst)
+                    {
+                        // Level present in old but not (at this position) in new => removed (size -> 0)
+                        Emit(isBid, op, 0.0, emit);
+                        i++;
+                    }
+                    else
+                    {
+                        // Level present in new but not in old => added (size -> ns)
+                        Emit(isBid, np, n.Size.GetValueOrDefault(), emit);
+                        j++;
+                    }
+                }
+            }
+
+            // Any remaining old levels are deletions
+            while (i < oldCount)
+            {
+                var o = oldSide[i++];
+                double op = o.Price.GetValueOrDefault();
+                if (op != 0.0) Emit(isBid, op, 0.0, emit);
+            }
+
+            // Any remaining new levels are additions
+            while (j < newCount)
+            {
+                var n = newSide[j++];
+                double np = n.Price.GetValueOrDefault();
+                if (np != 0.0) Emit(isBid, np, n.Size.GetValueOrDefault(), emit);
+            }
+        }
+
+
+
+        public void Clear()
+        {
+            using (_data.EnterWriteLock())
+            {
+                InternalClear();
+                _data.Clear();
+            }
+        }
+
+        public void Reset()
+        {
+            using (_data.EnterWriteLock())
+            {
+                InternalClear();
+                _data?.Reset();
+            }
+        }
+
+        public virtual void AddOrUpdateLevel(DeltaBookItem item)
+        {
+            AddOrUpdateLevel(item.IsBid, item.EntryID, item.Price, item.Size, item.LocalTimeStamp, item.ServerTimeStamp);
+        }
+        public virtual void AddOrUpdateLevel(bool? IsBid, string EntryID, double? Price, double? Size, DateTime LocalTimeStamp, DateTime ServerTimeStamp)
+        {
+            if (!IsBid.HasValue)
+                return;
+
+
+            if (Size.HasValue && IsZeroAtDp(Size.Value, this.SizeDecimalPlaces))
+            {
+                DeleteLevel(IsBid, EntryID, Price, Size);     // explicit remove, not an update to zero
+                return;
+            }
+
+            using (_data.EnterWriteLock())
+            {
+                var _list = (IsBid.HasValue && IsBid.Value ? _data.Bids : _data.Asks);
+                BookItem? itemFound = null;
+                var targetPrice = Price.Value;  // Cache the value
+                var count = _list.Count();
+
+                for (int i = 0; i < count; i++)
+                {
+                    if (_list[i].Price == targetPrice)  // Use cached value
+                    {
+                        itemFound = _list[i];
+                        break;
+                    }
+                }
+
+
+                if (itemFound == null)
+                    AddLevel(IsBid, EntryID, Price, Size, LocalTimeStamp, ServerTimeStamp);
+                else
+                    UpdateLevel(IsBid, EntryID, Price, Size, LocalTimeStamp, ServerTimeStamp);
+            }
+
+        }
+        public virtual void AddLevel(DeltaBookItem item)
+        {
+            AddLevel(item.IsBid, item.EntryID, item.Price, item.Size, item.LocalTimeStamp, item.ServerTimeStamp);
+        }
+        public virtual void AddLevel(bool? IsBid, string EntryID, double? Price, double? Size, DateTime LocalTimeStamp, DateTime ServerTimeStamp)
+        {
+            if (!IsBid.HasValue)
+                return;
+            if (Size.HasValue && IsZeroAtDp(Size.Value, this.SizeDecimalPlaces))
+            {
+                DeleteLevel(IsBid, EntryID, Price, Size);
+                return;
+            }
+            // quantize what we store so internals never carry float dust
+            Size = QuantizeToDp(Size.Value, this.SizeDecimalPlaces);
+
+            // Check if it is appropriate to add a new item to the Limit Order Book (LOB). 
+            // If the item exceeds the depth scope defined by MaxDepth, it should not be added.
+            // If the item is within the acceptable depth, truncate the LOB to ensure it adheres to the MaxDepth limit.
+            bool willNewItemFallOut = false;
+
+            var list = IsBid.Value ? _data.Bids : _data.Asks;
+            var listCount = list.Count();
+            if (IsBid.Value)
+            {
+                // Bids sorted descending: last element is the minimum price
+                willNewItemFallOut = listCount > this.MaxDepth && Price < list[listCount - 1].Price;
+            }
+            else
+            {
+                // Asks sorted ascending: last element is the maximum price
+                willNewItemFallOut = listCount > this.MaxDepth && Price > list[listCount - 1].Price;
+            }
+
+            if (!willNewItemFallOut)
+            {
+                // FIXED: Get from shared pool instead of instance pool
+                var _level = BookItemPool.Get();
+                _level.EntryID = EntryID;
+                _level.Price = Price;
+                _level.IsBid = IsBid.Value;
+                _level.LocalTimeStamp = LocalTimeStamp;
+                _level.ProviderID = _data.ProviderID;
+                _level.ServerTimeStamp = ServerTimeStamp;
+                _level.Size = Size;
+                _level.Symbol = _data.Symbol;
+                _level.PriceDecimalPlaces = this.PriceDecimalPlaces;
+                _level.SizeDecimalPlaces = this.SizeDecimalPlaces;
+                list.Add(_level);
+                listCount++;
+                Interlocked.Increment(ref _addedLevels);
+                if (_level.Size.HasValue && _level.Size.Value > 0)
+                {
+                    var scaled = Scale(_level.Size.Value);
+                    if (scaled > 0)
+                        Interlocked.Add(ref _addedVolumeScaled, scaled);
+                }
+
+                //truncate last item if we exceeded the MaxDepth
+                if (listCount > MaxDepth)
+                {
+                    // ALLOCATION-FREE: Direct index access
+                    int startIndex = MaxDepth; // First item to remove
+
+                    // Process excess items in reverse order (LIFO)
+                    for (int i = listCount - 1; i >= startIndex; i--)
+                    {
+                        var itemToReturn = list[i];
+                        BookItemPool.Return(itemToReturn);
+                    }
+
+                    // Truncate in one operation
+                    list.TruncateItemsAfterPosition(MaxDepth - 1);
+                }
+            }
+        }
+
+        public virtual void UpdateLevel(DeltaBookItem item)
+        {
+            UpdateLevel(item.IsBid, item.EntryID, item.Price, item.Size, item.LocalTimeStamp, item.ServerTimeStamp);
+        }
+        public virtual void UpdateLevel(bool? IsBid, string EntryID, double? Price, double? Size, DateTime LocalTimeStamp, DateTime ServerTimeStamp)
+        {
+            if (Size.HasValue && IsZeroAtDp(Size.Value, this.SizeDecimalPlaces))
+            {
+                DeleteLevel(IsBid, EntryID, Price, Size);
+                return;
+            }
+            // quantize what we store so internals never carry float dust
+            Size = QuantizeToDp(Size.Value, this.SizeDecimalPlaces);
+
+            (IsBid.HasValue && IsBid.Value ? _data.Bids : _data.Asks).Update(x => x.Price == Price,
+                existingItem =>
+                {
+                    double oldSize = existingItem.Size ?? 0.0;
+                    double newSize = Size ?? 0.0;
+
+                    if (oldSize > newSize)
+                    {
+                        var delta = oldSize - newSize;
+                        var scaled = Scale(delta);
+                        if (scaled > 0) Interlocked.Add(ref _deletedVolumeScaled, scaled);
+                        Interlocked.Increment(ref _deletedLevels);
+                    }
+                    else if (oldSize < newSize)
+                    {
+                        var delta = newSize - oldSize;
+                        var scaled = Scale(delta);
+                        if (scaled > 0) Interlocked.Add(ref _addedVolumeScaled, scaled);
+                        Interlocked.Increment(ref _addedLevels);
+                    }
+                    else
+                    {
+                        Interlocked.Increment(ref _updatedLevels);
+                        // (Keep _updatedVolumeScaled unused; hook here if needed.)
+                    }
+
+                    existingItem.Price = Price;
+                    existingItem.Size = Size;
+                    existingItem.LocalTimeStamp = LocalTimeStamp;
+                    existingItem.ServerTimeStamp = ServerTimeStamp;
+                });
+        }
+
+
+        public virtual void DeleteLevel(DeltaBookItem item)
+        {
+            DeleteLevel(item.IsBid, item.EntryID, item.Price, item.Size);
+        }
+        public virtual void DeleteLevel(bool? IsBid, string EntryID, double? Price, double? Size)
+        {
+            if (string.IsNullOrEmpty(EntryID) && (!Price.HasValue || Price.Value == 0))
+                throw new Exception("DeltaBookItem cannot be deleted since has no price or no EntryID.");
+            using (_data.EnterWriteLock())
+            {
+                BookItem _itemToDelete = null;
+
+                if (!string.IsNullOrEmpty(EntryID))
+                {
+                    if (IsBid.HasValue && IsBid.Value && _data.Bids == null)
+                        return;
+                    if (IsBid.HasValue && !IsBid.Value && _data.Asks == null)
+                        return;
+
+                    _itemToDelete = (IsBid.HasValue && IsBid.Value ? _data.Bids : _data.Asks)
+                        .FirstOrDefault(x => x.EntryID == EntryID);
+                }
+                else if (Price.HasValue && Price > 0)
+                {
+                    if (IsBid.HasValue && IsBid.Value && _data.Bids == null)
+                        return;
+                    if (IsBid.HasValue && !IsBid.Value && _data.Asks == null)
+                        return;
+
+                    _itemToDelete = (IsBid.HasValue && IsBid.Value ? _data.Bids : _data.Asks)
+                        .FirstOrDefault(x => x.Price == Price);
+                }
+
+                if (_itemToDelete != null)
+                {
+                    (IsBid.HasValue && IsBid.Value ? _data.Bids : _data.Asks).Remove(_itemToDelete);
+                    // FIXED: Return to shared pool instead of instance pool
+                    Interlocked.Increment(ref _deletedLevels);
+                    double sz = _itemToDelete.Size ?? 0.0;
+                    BookItemPool.Return(_itemToDelete);
+                    if (sz > 0)
+                    {
+                        var scaled = Scale(sz);
+                        if (scaled > 0)
+                            Interlocked.Add(ref _deletedVolumeScaled, scaled);
+                    }
+                }
+            }
+        }
+
+        public (long added, long deleted, long updated) GetCounters()
+        {
+            long added = Interlocked.Read(ref _addedLevels);
+            long deleted = Interlocked.Read(ref _deletedLevels);
+            long updated = Interlocked.Read(ref _updatedLevels);
+            return (added, deleted, updated);
+        }
+        public (double addedVol, double deletedVol, double updatedVol) GetCountersVolume()
+        {
+            var a = (ulong)Interlocked.Read(ref Unsafe.As<ulong, long>(ref _addedVolumeScaled));
+            var d = (ulong)Interlocked.Read(ref Unsafe.As<ulong, long>(ref _deletedVolumeScaled));
+            var u = (ulong)Interlocked.Read(ref Unsafe.As<ulong, long>(ref _updatedVolumeScaled));
+            return (Unscale(a), Unscale(d), Unscale(u));
+        }
+        private void ResetCounters()
+        {
+            Interlocked.Exchange(ref _addedLevels, 0);
+            Interlocked.Exchange(ref _deletedLevels, 0);
+            Interlocked.Exchange(ref _updatedLevels, 0);
+            Interlocked.Exchange(ref _addedVolumeScaled, 0);
+            Interlocked.Exchange(ref _deletedVolumeScaled, 0);
+            Interlocked.Exchange(ref _updatedVolumeScaled, 0);
+        }
+
+
+
+
+
+
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+        private static double QuantizeToDp(double size, int dp)
+        {
+            return Math.Round(size, dp, MidpointRounding.ToZero);
+        }
+
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+        private static bool IsZeroAtDp(double size, int dp)
+        {
+            // Anything that quantizes to 0 at this precision is treated as zero.
+            return QuantizeToDp(size, dp) == 0.0;
+        }
+
+
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+        private static ulong ComputeScale(int dp) =>
+            dp switch
+            {
+                0 => 1UL,
+                1 => 10UL,
+                2 => 100UL,
+                3 => 1_000UL,
+                4 => 10_000UL,
+                5 => 100_000UL,
+                6 => 1_000_000UL,
+                7 => 10_000_000UL,
+                8 => 100_000_000UL,
+                9 => 1_000_000_000UL,
+                _ => (ulong)Math.Pow(10, dp)
+            };
+
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+        private ulong Scale(double v)
+        {
+            if (v <= 0) return 0;
+            return (ulong)Math.Round(v * _volumeScale, MidpointRounding.ToZero);
+        }
+
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+        private double Unscale(ulong scaled) => scaled / (double)_volumeScale;
+
+        private void ThrowIfDisposed()
+        {
+            if (_disposed)
+                throw new ObjectDisposedException(nameof(OrderBook));
+        }
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    _data?.Dispose();
+                }
+                _disposed = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+    }
+}
+

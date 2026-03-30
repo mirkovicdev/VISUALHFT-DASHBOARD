@@ -1,0 +1,155 @@
+[
+  {
+    "channel": "executions",
+    "type": "update",
+    "data": [
+      {
+        "order_id": "OLSF57-IFNJQ-3MO5XK",
+        "symbol": "BTC/USD",
+        "order_qty": 0.00005000,
+        "cum_cost": 0.00000,
+        "time_in_force": "GTC",
+        "exec_type": "pending_new",
+        "side": "sell",
+        "order_type": "stop-loss-limit",
+        "order_userref": 0,
+        "limit_price_type": "static",
+        "triggers": {
+          "price": 96186.0,
+          "price_type": "static",
+          "reference": "index",
+          "status": "untriggered"
+        },
+        "stop_price": 96186.0,
+        "limit_price": 96182.0,
+        "trigger": "index",
+        "order_status": "pending_new",
+        "fee_usd_equiv": 0.00000,
+        "fee_ccy_pref": "fciq",
+        "timestamp": "2025-02-12T08:12:30.843920Z"
+      }
+    ],
+    "sequence": 5
+  },
+  {
+    "channel": "executions",
+    "type": "update",
+    "data": [
+      {
+        "timestamp": "2025-02-12T08:12:30.843920Z",
+        "order_status": "new",
+        "exec_type": "new",
+        "order_userref": 0,
+        "order_id": "OLSF57-IFNJQ-3MO5XK"
+      }
+    ],
+    "sequence": 6
+  },
+  {
+    "channel": "executions",
+    "type": "update",
+    "data": [
+      {
+        "timestamp": "2025-02-12T08:12:30.843920Z",
+        "order_status": "triggered",
+        "exec_type": "new",
+        "triggered_price": 96182.8,
+        "limit_price": 96182.0,
+        "triggers": {
+          "status": "triggered",
+          "timestamp": "2025-02-12T08:12:30.843920Z",
+          "last_price": 96182.8
+        },
+        "order_userref": 0,
+        "order_id": "OLSF57-IFNJQ-3MO5XK"
+      }
+    ],
+    "sequence": 7
+  },
+  {
+    "channel": "executions",
+    "type": "update",
+    "data": [
+      {
+        "order_id": "OLSF57-IFNJQ-3MO5XK",
+        "symbol": "BTC/USD",
+        "order_qty": 0.00005000,
+        "cum_cost": 0.00000,
+        "time_in_force": "GTC",
+        "exec_type": "new",
+        "side": "sell",
+        "order_type": "stop-loss-limit",
+        "order_userref": 0,
+        "limit_price_type": "static",
+        "triggers": {
+          "price": 96186.0,
+          "price_type": "static",
+          "reference": "index",
+          "timestamp": "2025-02-12T08:12:30.843920Z",
+          "last_price": 96182.8,
+          "status": "triggered"
+        },
+        "stop_price": 96186.0,
+        "limit_price": 96182.0,
+        "trigger": "index",
+        "triggered_price": 96182.8,
+        "order_status": "new",
+        "fee_usd_equiv": 0.00000,
+        "fee_ccy_pref": "fciq",
+        "timestamp": "2025-02-12T08:12:30.843920Z"
+      }
+    ],
+    "sequence": 8
+  },
+  {
+    "channel": "executions",
+    "type": "update",
+    "data": [
+      {
+        "order_id": "OLSF57-IFNJQ-3MO5XK",
+        "order_userref": 0,
+        "exec_id": "T7OITO-NOWJO-U2WVVZ",
+        "exec_type": "trade",
+        "trade_id": 79790832,
+        "symbol": "BTC/USD",
+        "side": "sell",
+        "last_qty": 0.00005000,
+        "last_price": 96199.9,
+        "liquidity_ind": "t",
+        "cost": 4.81000,
+        "order_type": "stop-loss-limit",
+        "timestamp": "2025-02-12T08:13:47.084247Z",
+        "order_status": "partially_filled",
+        "cum_qty": 0.00005000,
+        "cum_cost": 4.81000,
+        "avg_price": 96200.0,
+        "fee_usd_equiv": 0.01924,
+        "fees": [
+          {
+            "asset": "USD",
+            "qty": 0.01924
+          }
+        ]
+      }
+    ],
+    "sequence": 10
+  },
+  {
+    "channel": "executions",
+    "type": "update",
+    "data": [
+      {
+        "timestamp": "2025-02-12T08:13:47.084247Z",
+        "order_status": "filled",
+        "exec_type": "filled",
+        "cum_qty": 0.00005000,
+        "cum_cost": 4.81000,
+        "fee_usd_equiv": 0.01924,
+        "avg_price": 96200.0,
+        "order_userref": 0,
+        "order_id": "OLSF57-IFNJQ-3MO5XK"
+      }
+    ],
+    "sequence": 11
+  }
+]
